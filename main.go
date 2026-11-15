@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"github.com/ztaylorpossible/gator/internal/config"
 )
 
@@ -13,18 +14,25 @@ func main() {
 		return;
 	}
 
-	conf.SetUser("zach");
-	if err != nil {
-		fmt.Printf("Error setting user: %v\n", err);
-		return;
-	}
-	
-	conf, err = config.Read();
+	state := State{conf: &conf};
+	commands := Commands{commands: make(map[string]func(*State, Command) error)};
 
-	if err != nil {
-		fmt.Printf("Error reading config: %v\n", err);
-		return;
+	commands.register("login", handlerLogin);
+
+	if len(os.Args) < 2 {
+		fmt.Println("No command provided.");
+		os.Exit(1);
 	}
 
-	fmt.Printf("Database url: %s\nUsername: %s\n", conf.Db_url, conf.Current_user_name);
+	command := Command{name: os.Args[1], args: os.Args[2:]}
+	err = commands.run(&state, command);
+
+	if err != nil {
+		fmt.Printf("Error running command %s: %v\n", command.name, err);
+		os.Exit(1);
+	}
+}
+
+type State struct {
+	conf *config.Config
 }
