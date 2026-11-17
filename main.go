@@ -3,8 +3,12 @@ package main
 import (
 	"fmt"
 	"os"
+	"database/sql"
 	"github.com/ztaylorpossible/gator/internal/config"
+	"github.com/ztaylorpossible/gator/internal/database"
 )
+
+import _ "github.com/lib/pq"
 
 func main() {
 	conf, err := config.Read();
@@ -15,9 +19,14 @@ func main() {
 	}
 
 	state := State{conf: &conf};
+
+	db, err := sql.Open("postgres", state.conf.Db_url);
+	state.db = database.New(db);
+
 	commands := Commands{commands: make(map[string]func(*State, Command) error)};
 
 	commands.register("login", handlerLogin);
+	commands.register("register", handlerRegister);
 
 	if len(os.Args) < 2 {
 		fmt.Println("No command provided.");
@@ -35,4 +44,5 @@ func main() {
 
 type State struct {
 	conf *config.Config
+	db *database.Queries
 }
