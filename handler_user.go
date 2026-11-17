@@ -55,3 +55,14 @@ func handlerLogin(s *State, cmd Command) error {
 
 	return nil;
  }
+
+ func handlerReset(s *State, cmd Command) error {
+	 err := s.db.DeleteUsers(context.Background());
+	 if err != nil {
+		 return err;
+	 }
+
+	 fmt.Println("Users were successfully deleted.");
+
+	 return nil;
+ }
