@@ -66,3 +66,22 @@ func handlerLogin(s *State, cmd Command) error {
 
 	 return nil;
  }
+
+ func handlerUsers(s *State, cmd Command) error {
+	users, err := s.db.GetUsers(context.Background());
+	if err != nil {
+		return err;
+	}
+
+	for _, user := range users {
+		var name string;
+		if user.Name == s.conf.Current_user_name {
+			name = fmt.Sprintf("* %s (current)\n", user.Name);
+		} else {
+			name = fmt.Sprintf("* %s\n", user.Name);
+		}
+		fmt.Printf("%s", name);
+	}
+	
+	return nil;
+ }
