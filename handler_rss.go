@@ -19,14 +19,9 @@ func handlerAgg(s *State, cmd Command) error {
 	return nil;
 }
 
-func handlerAddFeed(s *State, cmd Command) error {
+func handlerAddFeed(s *State, cmd Command, user database.User) error {
 	if len(cmd.args) < 2 {
 		return errors.New("addfeed expects a feed name and url");
-	}
-
-	user, err := s.db.GetUser(context.Background(), s.conf.Current_user_name);
-	if err != nil {
-		return err;
 	}
 
 	feedParams := database.CreateFeedParams{

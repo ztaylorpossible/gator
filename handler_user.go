@@ -86,14 +86,9 @@ func handlerUsers(s *State, cmd Command) error {
 	return nil;
 }
 
-func handlerFollow(s *State, cmd Command) error {
+func handlerFollow(s *State, cmd Command, user database.User) error {
 	if len(cmd.args) <= 0 {
 		return errors.New("follow expects a url");
-	}
-
-	user, err := s.db.GetUser(context.Background(), s.conf.Current_user_name);
-	if err != nil {
-		return err;
 	}
 
 	feed, err := s.db.GetFeedByUrl(context.Background(), cmd.args[0]);
@@ -119,12 +114,7 @@ func handlerFollow(s *State, cmd Command) error {
 	return nil;
 }
 
-func handlerFollowing(s *State, cmd Command) error {
-	user, err := s.db.GetUser(context.Background(), s.conf.Current_user_name);
-	if err != nil {
-		return err;
-	}
-
+func handlerFollowing(s *State, cmd Command, user database.User) error {
 	feeds, err := s.db.GetFeedFollowsForUser(context.Background(), user.ID);
 	if err != nil {
 		return err;
