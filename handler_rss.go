@@ -46,3 +46,21 @@ func handlerAddFeed(s *State, cmd Command) error {
 	fmt.Printf("New feed created: %v\n", feed);
 	return nil;
 }
+
+func handlerFeeds(s *State, cmd Command) error {
+	feeds, err := s.db.GetFeeds(context.Background());
+	if err != nil {
+		return err;
+	}
+
+	for _, feed := range feeds {
+		user, err := s.db.GetUserById(context.Background(), feed.UserID);
+		if err != nil {
+			return nil;
+		}
+
+		fmt.Printf("Feed \"%s\": %s | Created by %s\n", feed.Name, feed.Url, user.Name);
+	}
+
+	return nil;
+}
